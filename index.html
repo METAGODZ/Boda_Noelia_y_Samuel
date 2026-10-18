@@ -58,7 +58,6 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
   <b>N&amp;S</b>
   <a href="#inicio">Inicio</a>
   <a href="#momentos">Momentos clave</a>
-  <a href="#detalles">Detalles del día</a>
   <a href="#rsvp-form">Confirmación</a>
   <a href="#regalo">Regalo</a>
 </nav>
@@ -70,14 +69,15 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
   <p>¡Nos casamos! Estamos muy felices de dar este paso y nos encantaría contar contigo para celebrar el día más importante de nuestras vidas.</p>
   <p>Aquí te dejamos toda la info y el <strong>formulario de confirmación</strong>, que has de rellenar <strong>antes del 11 de marzo</strong>.</p>
   <p>¡Esperamos verte el 11 de abril de 2027!</p>
-  <a class="btn" href="#detalles">Detalles del día</a>
-  <a class="btn alt" href="#rsvp-form">Confirmar asistencia</a>
+  <a class="btn" href="#rsvp-form">Confirmar asistencia</a>
  
   <div class="facts">
     <div><small>Fecha</small>Domingo, 11 de abril de 2027</div>
     <div><small>Horario</small>13:00 a 22:00</div>
     <div><small>Lugar</small>Casa de Burgos, Madrid</div>
   </div>
+ 
+  <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Casa+de+Burgos+Calle+Principal+de+Provincias+3+28011+Madrid" target="_blank" rel="noopener">Ver en Google Maps</a>
  
   <p>Faltan</p>
   <div id="count">
@@ -96,16 +96,6 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
     <li><time>15:15</time><div><h3>Comida</h3><p>De 15:15 a 18:00</p></div></li>
     <li><time>18:00</time><div><h3>Fiesta</h3><p>De 18:00 a 22:00</p></div></li>
   </ol>
-</section>
- 
-<section id="detalles">
-  <h2>Detalles del día</h2>
-  <p>La ceremonia civil, el banquete y la fiesta serán en el mismo lugar, así que no hará falta moverse. Aquí tienes un enlace directo a Google Maps.</p>
- 
-  <h3>Casa de Burgos</h3>
-  <p><strong>Hora de inicio:</strong> 13:00<br><strong>Fin del evento:</strong> 22:00<br><strong>Dirección:</strong> C. Principal de Provincias, 3, Moncloa - Aravaca, 28011 Madrid<br><strong>Plan del evento:</strong> Ceremonia · Cóctel · Comida · Fiesta</p>
-  <img src="assets/img/lugar.jpg" alt="Casa de Burgos" onerror="this.remove()">
-  <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Casa+de+Burgos+Calle+Principal+de+Provincias+3+28011+Madrid" target="_blank" rel="noopener">Ver en Google Maps</a>
 </section>
  
 <section id="rsvp-form">
@@ -147,6 +137,18 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
       <input type="text" name="alergias_otro" class="otro" id="alergia-otro-txt" aria-label="Otra alergia o restricción" hidden>
     </fieldset>
  
+    <fieldset>
+      <legend>Menú infantil (no tienen límite de edad)</legend>
+      <label><input type="radio" name="menu_infantil" value="No me hace falta" required> No me hace falta</label>
+      <label><input type="radio" name="menu_infantil" value="Necesito menú infantil"> Necesito menú infantil</label>
+      <label id="infantil-num" hidden>¿Cuántos menús infantiles necesitas?
+        <select name="num_menus_infantiles" id="infantil-select">
+          <option value="">Selecciona</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+        </select>
+      </label>
+    </fieldset>
+ 
  
     <button class="btn" type="submit">Confirmar asistencia</button>
     <div id="msg" role="status"></div>
@@ -159,7 +161,7 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
   <p>Vuestra presencia es el mejor regalo, de verdad. Pero sabemos que algunos sois de los que no pueden venir con las manos vacías, así que hemos abierto una hucha muy especial: la <strong>hucha de los recién casados</strong> 🐷</p>
   <p>Cada aportación nos ayudará a empezar esta nueva etapa con buen pie (y con algún capricho que otro).</p>
   <p>No hace falta que sea nada grande: lo que cabe en un sobre también cabe en una transferencia 💌</p>
-  <p class="iban">[Tu IBAN aquí]</p>
+  <p class="iban">ES81 1465 0100 9117 7136 3199</p>
   <p>Concepto sugerido: <em>¡Vivan los novios!</em></p>
 </section>
  
@@ -189,15 +191,31 @@ document.querySelectorAll('input[name="alergias"]').forEach(function(r){
   });
 });
  
-// Formulario: pega aquí la URL donde se guardarán las respuestas (Google Apps Script, Formspree...)
-var FORM_URL = "";
+document.querySelectorAll('input[name="menu_infantil"]').forEach(function(r){
+  r.addEventListener("change", function(){
+    var necesita = (r.value === "Necesito menú infantil");
+    document.getElementById("infantil-num").hidden = !necesita;
+    document.getElementById("infantil-select").required = necesita;
+    if(!necesita) document.getElementById("infantil-select").value = "";
+  });
+});
+ 
+// Formulario: pega aquí la clave de acceso que te da Web3Forms (entre las comillas)
+var ACCESS_KEY = "";
 function enviar(e){
   e.preventDefault();
   var msg = document.getElementById("msg");
-  if(!FORM_URL){ msg.textContent = "El formulario aún no está conectado."; return false; }
+  if(!ACCESS_KEY){ msg.textContent = "El formulario aún no está conectado."; return false; }
   var datos = new FormData(e.target);
-  fetch(FORM_URL, {method:"POST", body:datos, mode:"no-cors"})
-    .then(function(){ msg.textContent = "¡Gracias! Respuesta enviada 🤍"; e.target.reset(); })
+  datos.append("access_key", ACCESS_KEY);
+  datos.append("subject", "Nueva confirmación - Boda Noelia y Samuel");
+  msg.textContent = "Enviando...";
+  fetch("https://api.web3forms.com/submit", {method:"POST", body:datos})
+    .then(function(r){ return r.json(); })
+    .then(function(r){
+      if(r.success){ msg.textContent = "¡Gracias! Respuesta enviada 🤍"; e.target.reset(); }
+      else { msg.textContent = "No se pudo enviar. Inténtalo de nuevo."; }
+    })
     .catch(function(){ msg.textContent = "No se pudo enviar. Inténtalo de nuevo."; });
   return false;
 }
