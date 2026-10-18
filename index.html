@@ -117,9 +117,17 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
       <label><input type="radio" name="acompanado" value="No"> No</label>
     </fieldset>
  
-    <label id="acomp" hidden>Nombre y apellidos de los acompañantes
-      <textarea name="acompanantes" rows="3" style="width:100%;padding:.7rem;border:1px solid var(--line);border-radius:8px;font:inherit"></textarea>
-    </label>
+    <div id="acomp" hidden>
+      <label>¿Cuántos acompañantes vienen contigo?
+        <select name="num_acompanantes" id="acomp-num">
+          <option value="">Selecciona</option>
+          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+        </select>
+      </label>
+      <label>Nombre y apellidos de los acompañantes
+        <textarea name="acompanantes" rows="3" style="width:100%;padding:.7rem;border:1px solid var(--line);border-radius:8px;font:inherit"></textarea>
+      </label>
+    </div>
  
     <div class="menu-intro">
       <h3>Entramos en la sección más rica: el menú</h3>
@@ -146,6 +154,9 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
           <option value="">Selecciona</option>
           <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
         </select>
+      </label>
+      <label id="infantil-para" hidden>¿Para quién es el menú infantil? (nombre de la persona o personas)
+        <input type="text" name="menu_infantil_para" id="infantil-para-txt">
       </label>
     </fieldset>
  
@@ -182,7 +193,10 @@ tick(); setInterval(tick, 1000);
 // Muestra los campos extra solo cuando hacen falta
 document.querySelectorAll('input[name="acompanado"]').forEach(function(r){
   r.addEventListener("change", function(){
-    document.getElementById("acomp").hidden = (r.value !== "Sí");
+    var viene = (r.value === "Sí");
+    document.getElementById("acomp").hidden = !viene;
+    document.getElementById("acomp-num").required = viene;
+    if(!viene) document.getElementById("acomp-num").value = "";
   });
 });
 document.querySelectorAll('input[name="alergias"]').forEach(function(r){
@@ -195,8 +209,13 @@ document.querySelectorAll('input[name="menu_infantil"]').forEach(function(r){
   r.addEventListener("change", function(){
     var necesita = (r.value === "Necesito menú infantil");
     document.getElementById("infantil-num").hidden = !necesita;
+    document.getElementById("infantil-para").hidden = !necesita;
     document.getElementById("infantil-select").required = necesita;
-    if(!necesita) document.getElementById("infantil-select").value = "";
+    document.getElementById("infantil-para-txt").required = necesita;
+    if(!necesita){
+      document.getElementById("infantil-select").value = "";
+      document.getElementById("infantil-para-txt").value = "";
+    }
   });
 });
  
@@ -216,3 +235,4 @@ function enviar(e){
 </script>
 </body>
 </html>
+ 
