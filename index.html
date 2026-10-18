@@ -40,25 +40,29 @@ ul{padding-left:1.2rem}
 .no{color:#9a4a4a}
 .iban{background:var(--tint);padding:.8rem 1rem;border-radius:8px;font-weight:500;letter-spacing:.03em;word-break:break-all}
 label{display:block;margin:.6rem 0}
-input[type=text],select{width:100%;padding:.7rem;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
+input[type=text],select,textarea{width:100%;padding:.7rem;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
 fieldset{border:1px solid var(--line);border-radius:10px;margin:1rem 0;padding:.4rem 1rem 1rem}
+.menu-intro{background:var(--tint);border-radius:10px;padding:1rem;margin:1.5rem 0 .5rem}
+.menu-intro h3{margin:0 0 .3rem}
+.menu-intro p{margin:0}
+.otro{margin-top:.3rem}
+[hidden]{display:none!important}
 #msg{margin-top:1rem;font-weight:500}
 footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
 </style>
 </head>
 <body>
-
+ 
 <nav>
   <b>N&amp;S</b>
   <a href="#inicio">Inicio</a>
   <a href="#momentos">Momentos clave</a>
   <a href="#detalles">Detalles del día</a>
-  <a href="#dresscode">Dress Code</a>
-  <a href="#regalo">Regalo</a>
   <a href="#rsvp-form">Confirmación</a>
+  <a href="#regalo">Regalo</a>
 </nav>
-
+ 
 <section id="inicio">
   <img src="assets/img/main.jpg" alt="Noelia y Samuel" onerror="this.remove()">
   <h1>Noelia &amp; Samuel</h1>
@@ -67,13 +71,13 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
   <p>¡Esperamos verte el 11 de abril de 2027!</p>
   <a class="btn" href="#detalles">Detalles del día</a>
   <a class="btn alt" href="#rsvp-form">Confirmar asistencia</a>
-
+ 
   <div class="facts">
     <div><small>Fecha</small>Domingo, 11 de abril de 2027</div>
     <div><small>Horario</small>13:00 a 22:00</div>
     <div><small>Lugar</small>Casa de Burgos, Madrid</div>
   </div>
-
+ 
   <p>Faltan</p>
   <div id="count">
     <span id="d">--<small>Días</small></span>
@@ -82,7 +86,7 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
     <span id="s">--<small>Seg</small></span>
   </div>
 </section>
-
+ 
 <section id="momentos">
   <h2>Momentos clave</h2>
   <ol class="timeline">
@@ -92,83 +96,76 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
     <li><time>18:00</time><div><h3>Fiesta</h3><p>De 18:00 a 22:00</p></div></li>
   </ol>
 </section>
-
+ 
 <section id="detalles">
   <h2>Detalles del día</h2>
   <p>La ceremonia civil, el banquete y la fiesta serán en el mismo lugar, así que no hará falta moverse. Aquí tienes un enlace directo a Google Maps.</p>
-
+ 
   <h3>Casa de Burgos</h3>
   <p><strong>Hora de inicio:</strong> 13:00<br><strong>Fin del evento:</strong> 22:00<br><strong>Dirección:</strong> C. Principal de Provincias, 3, Moncloa - Aravaca, 28011 Madrid<br><strong>Plan del evento:</strong> Ceremonia · Cóctel · Comida · Fiesta</p>
   <img src="assets/img/lugar.jpg" alt="Casa de Burgos" onerror="this.remove()">
   <a class="btn" href="https://www.google.com/maps/search/?api=1&amp;query=Casa+de+Burgos+Calle+Principal+de+Provincias+3+28011+Madrid" target="_blank" rel="noopener">Ver en Google Maps</a>
 </section>
-
-<section id="dresscode">
-  <h2>Dress Code</h2>
-  <p>Te dejamos unos consejos para que estés cómodo y guapo el día de la boda.</p>
-
-  <h3>Ellas</h3>
-  <p>Invitamos a seguir el protocolo.</p>
-  <h4>Cómo estaré guapa</h4>
-  <ul>
-    <li>Evita tacones demasiado finos o llévate unos para cambiarte: puede haber zona de césped o jardín y no queremos que te hundas.</li>
-    <li>Unas cuñas son ideales y cómodas.</li>
-    <li>Si quieres llevar tocado vas a ir monísima, ¡anímate!</li>
-  </ul>
-  <h4>Cómo NO estaré guapa</h4>
-  <ul class="no">
-    <li>Ir de BLANCO (reservado para la novia).</li>
-    <li>Colores beige, marfil, nude, champagne y ese rosa clarito tan bonito tampoco lucen bien.</li>
-  </ul>
-
-  <h3>Ellos</h3>
-  <p>Lo tenéis muy fácil.</p>
-  <h4>Cómo estaré guapo</h4>
-  <ul>
-    <li>Traje.</li>
-    <li>Trae corbata, que no es para tanto.</li>
-  </ul>
-  <h4>Cómo NO estaré guapo</h4>
-  <ul class="no">
-    <li>Polo o camiseta (un poco de por favor).</li>
-    <li>Zapatillas deportivas.</li>
-    <li>Vaqueros, ropa deportiva o chándal.</li>
-  </ul>
+ 
+<section id="rsvp-form">
+  <h2>Confirma tu asistencia</h2>
+  <form id="rsvp" onsubmit="return enviar(event)">
+    <label>Nombre y apellidos
+      <input type="text" name="nombre" required autocomplete="name">
+    </label>
+ 
+    <fieldset>
+      <legend>¿Nos acompañas en nuestro gran día?</legend>
+      <label><input type="radio" name="asistencia" value="Sí, ahí estaré sin falta" required> ¡Sí, ahí estaré sin falta!</label>
+      <label><input type="radio" name="asistencia" value="No podré asistir"> Sintiéndolo mucho, no podré asistir</label>
+    </fieldset>
+ 
+    <fieldset>
+      <legend>¿Vienes con alguien a la boda?</legend>
+      <label><input type="radio" name="acompanado" value="Sí" required> Sí</label>
+      <label><input type="radio" name="acompanado" value="No"> No</label>
+    </fieldset>
+ 
+    <label id="acomp" hidden>Nombre y apellidos de los acompañantes
+      <textarea name="acompanantes" rows="3" style="width:100%;padding:.7rem;border:1px solid var(--line);border-radius:8px;font:inherit"></textarea>
+    </label>
+ 
+    <div class="menu-intro">
+      <h3>Entramos en la sección más rica: el menú</h3>
+      <p>Contaremos con una amplia variedad de platos en el cóctel y un menú cerrado que os hará la boca agua.</p>
+    </div>
+ 
+    <fieldset>
+      <legend>Alergias</legend>
+      <label><input type="radio" name="alergias" value="Sin restricciones" required> Sin restricciones</label>
+      <label><input type="radio" name="alergias" value="Celiaco"> Celiaco</label>
+      <label><input type="radio" name="alergias" value="Intolerante a la lactosa"> Intolerante a la lactosa</label>
+      <label><input type="radio" name="alergias" value="Vegetariano"> Vegetariano</label>
+      <label><input type="radio" name="alergias" value="Vegano"> Vegano</label>
+      <label><input type="radio" name="alergias" value="Otro" id="alergia-otro"> Otro:</label>
+      <input type="text" name="alergias_otro" class="otro" id="alergia-otro-txt" aria-label="Otra alergia o restricción" hidden>
+    </fieldset>
+ 
+    <fieldset>
+      <legend>Menú infantil (no tienen límite de edad)</legend>
+      <label><input type="radio" name="menu_infantil" value="No me hace falta" required> No me hace falta</label>
+      <label><input type="radio" name="menu_infantil" value="Necesito menú infantil"> Necesito menú infantil</label>
+    </fieldset>
+ 
+    <button class="btn" type="submit">Confirmar asistencia</button>
+    <div id="msg" role="status"></div>
+  </form>
 </section>
-
+ 
 <section id="regalo">
   <h2>Regalo</h2>
   <p>Sin vosotros no sería igual. Gracias por acompañarnos en esta nueva etapa que comenzamos. Lo importante para nosotros es que vengáis con ilusión, alegría y ganas de pasarlo bien, pero si queréis hacernos un regalo, os dejamos esto por aquí.</p>
   <p>¡Gracias!</p>
   <p class="iban">[Tu IBAN aquí]</p>
 </section>
-
-<section id="rsvp-form">
-  <h2>Formulario de confirmación</h2>
-  <p>Por favor, rellena un formulario por persona que asista. Así podremos tener todo bien organizado para ese día.</p>
-  <form id="rsvp" onsubmit="return enviar(event)">
-    <label>Nombre y apellidos
-      <input type="text" name="nombre" required autocomplete="name">
-    </label>
-    <fieldset>
-      <legend>Asistencia</legend>
-      <label><input type="radio" name="asistencia" value="Asistiré" required> Asistiré</label>
-      <label><input type="radio" name="asistencia" value="No podré asistir"> No podré asistir</label>
-    </fieldset>
-    <label>¿Estás preparado para ver lo guapa que va a ir Noelia?
-      <select name="pregunta" required>
-        <option value="">Selecciona una opción</option>
-        <option>Nada te prepara para eso</option>
-        <option>Sí, pero necesitaré gafas de sol 😎</option>
-      </select>
-    </label>
-    <button class="btn" type="submit">Confirmar asistencia</button>
-    <div id="msg" role="status"></div>
-  </form>
-</section>
-
+ 
 <footer>Con cariño, Noelia &amp; Samuel.</footer>
-
+ 
 <script>
 // Cuenta atrás hasta el inicio de la ceremonia
 var objetivo = new Date("2027-04-11T13:00:00");
@@ -179,7 +176,20 @@ function tick(){
   for (var k in v) document.getElementById(k).innerHTML = v[k] + "<small>" + l[k] + "</small>";
 }
 tick(); setInterval(tick, 1000);
-
+ 
+ 
+// Muestra los campos extra solo cuando hacen falta
+document.querySelectorAll('input[name="acompanado"]').forEach(function(r){
+  r.addEventListener("change", function(){
+    document.getElementById("acomp").hidden = (r.value !== "Sí");
+  });
+});
+document.querySelectorAll('input[name="alergias"]').forEach(function(r){
+  r.addEventListener("change", function(){
+    document.getElementById("alergia-otro-txt").hidden = (r.id !== "alergia-otro");
+  });
+});
+ 
 // Formulario: pega aquí la URL donde se guardarán las respuestas (Google Apps Script, Formspree...)
 var FORM_URL = "";
 function enviar(e){
