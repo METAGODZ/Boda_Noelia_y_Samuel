@@ -47,6 +47,9 @@ fieldset{border:1px solid var(--line);border-radius:10px;margin:1rem 0;padding:.
 .menu-intro p{margin:0}
 .otro{margin-top:.3rem}
 [hidden]{display:none!important}
+fieldset.plain{border:0;padding:0;margin:0;min-width:0}
+.persona{border:1px solid var(--line);border-radius:10px;padding:.2rem 1rem 1rem;margin:1rem 0}
+.persona h3{margin:.8rem 0 .2rem;font-size:1.25rem}
 #msg{margin-top:1rem;font-weight:500}
 footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
@@ -111,55 +114,31 @@ footer{text-align:center;color:var(--soft);padding:2rem 1rem 3rem}
       <label><input type="radio" name="asistencia" value="No podré asistir"> Sintiéndolo mucho, no podré asistir</label>
     </fieldset>
  
-    <fieldset>
-      <legend>¿Vienes con alguien a la boda?</legend>
-      <label><input type="radio" name="acompanado" value="Sí" required> Sí</label>
-      <label><input type="radio" name="acompanado" value="No"> No</label>
+    <fieldset class="plain" id="bloque-asiste" hidden disabled>
+      <div class="menu-intro">
+        <h3>Entramos en la sección más rica: el menú</h3>
+        <p>Contaremos con una amplia variedad de platos en el cóctel y un menú cerrado que os hará la boca agua.</p>
+      </div>
+ 
+      <div id="persona-titular"></div>
+ 
+      <fieldset>
+        <legend>¿Vienes con alguien a la boda?</legend>
+        <label><input type="radio" name="acompanado" value="Sí" required> Sí</label>
+        <label><input type="radio" name="acompanado" value="No"> No</label>
+      </fieldset>
+ 
+      <fieldset class="plain" id="acomp" hidden disabled>
+        <label>¿Cuántos acompañantes vienen contigo?
+          <select name="num_acompanantes" id="acomp-num" required>
+            <option value="">Selecciona</option>
+            <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+            <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+          </select>
+        </label>
+        <div id="acomp-lista"></div>
+      </fieldset>
     </fieldset>
- 
-    <div id="acomp" hidden>
-      <label>¿Cuántos acompañantes vienen contigo?
-        <select name="num_acompanantes" id="acomp-num">
-          <option value="">Selecciona</option>
-          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
-        </select>
-      </label>
-      <label>Nombre y apellidos de los acompañantes
-        <textarea name="acompanantes" rows="3" style="width:100%;padding:.7rem;border:1px solid var(--line);border-radius:8px;font:inherit"></textarea>
-      </label>
-    </div>
- 
-    <div class="menu-intro">
-      <h3>Entramos en la sección más rica: el menú</h3>
-      <p>Contaremos con una amplia variedad de platos en el cóctel y un menú cerrado que os hará la boca agua.</p>
-    </div>
- 
-    <fieldset>
-      <legend>Alergias</legend>
-      <label><input type="radio" name="alergias" value="Sin restricciones" required> Sin restricciones</label>
-      <label><input type="radio" name="alergias" value="Celiaco"> Celiaco</label>
-      <label><input type="radio" name="alergias" value="Intolerante a la lactosa"> Intolerante a la lactosa</label>
-      <label><input type="radio" name="alergias" value="Vegetariano"> Vegetariano</label>
-      <label><input type="radio" name="alergias" value="Vegano"> Vegano</label>
-      <label><input type="radio" name="alergias" value="Otro" id="alergia-otro"> Otro:</label>
-      <input type="text" name="alergias_otro" class="otro" id="alergia-otro-txt" aria-label="Otra alergia o restricción" hidden>
-    </fieldset>
- 
-    <fieldset>
-      <legend>Menú infantil (no tienen límite de edad)</legend>
-      <label><input type="radio" name="menu_infantil" value="No me hace falta" required> No me hace falta</label>
-      <label><input type="radio" name="menu_infantil" value="Necesito menú infantil"> Necesito menú infantil</label>
-      <label id="infantil-num" hidden>¿Cuántos menús infantiles necesitas?
-        <select name="num_menus_infantiles" id="infantil-select">
-          <option value="">Selecciona</option>
-          <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
-        </select>
-      </label>
-      <label id="infantil-para" hidden>¿Para quién es el menú infantil? (nombre de la persona o personas)
-        <input type="text" name="menu_infantil_para" id="infantil-para-txt">
-      </label>
-    </fieldset>
- 
  
     <button class="btn" type="submit">Confirmar asistencia</button>
     <div id="msg" role="status"></div>
@@ -190,45 +169,81 @@ function tick(){
 tick(); setInterval(tick, 1000);
  
  
-// Muestra los campos extra solo cuando hacen falta
-document.querySelectorAll('input[name="acompanado"]').forEach(function(r){
-  r.addEventListener("change", function(){
-    var viene = (r.value === "Sí");
-    document.getElementById("acomp").hidden = !viene;
-    document.getElementById("acomp-num").required = viene;
-    if(!viene) document.getElementById("acomp-num").value = "";
-  });
-});
-document.querySelectorAll('input[name="alergias"]').forEach(function(r){
-  r.addEventListener("change", function(){
-    document.getElementById("alergia-otro-txt").hidden = (r.id !== "alergia-otro");
-  });
+// ---- Formulario ----
+// Pega aquí la URL de la aplicación web de Google Apps Script (termina en /exec)
+var FORM_URL = "";
+ 
+var ALERGIAS = ["Sin restricciones","Celiaco","Intolerante a la lactosa","Vegetariano","Vegano","Otro"];
+ 
+function personaHTML(i){
+  var titulo = i === 0 ? "Tu menú" : "Acompañante " + i;
+  var h = '<div class="persona"><h3>' + titulo + '</h3>';
+  if (i > 0) h += '<label>Nombre y apellidos<input type="text" name="p'+i+'_nombre" required></label>';
+  h += '<label>Menú<select name="p'+i+'_menu" required><option value="">Selecciona</option>' +
+       '<option value="Adulto">Menú adulto</option>' +
+       '<option value="Infantil">Menú infantil (no tienen límite de edad)</option></select></label>';
+  h += '<label>Alergias o dieta<select name="p'+i+'_alergia" data-otro="p'+i+'_otro" required><option value="">Selecciona</option>' +
+       ALERGIAS.map(function(a){ return '<option>'+a+'</option>'; }).join('') + '</select></label>';
+  h += '<input type="text" name="p'+i+'_otro" placeholder="Indica cuál" aria-label="Otra alergia o dieta" hidden>';
+  return h + '</div>';
+}
+ 
+var form = document.getElementById("rsvp");
+var bloque = document.getElementById("bloque-asiste");
+var acomp = document.getElementById("acomp");
+var lista = document.getElementById("acomp-lista");
+document.getElementById("persona-titular").innerHTML = personaHTML(0);
+ 
+function activar(el, on){ el.hidden = !on; el.disabled = !on; }
+ 
+form.addEventListener("change", function(ev){
+  var t = ev.target;
+  if (t.name === "asistencia") {
+    activar(bloque, t.value.indexOf("Sí") === 0);
+  } else if (t.name === "acompanado") {
+    var viene = (t.value === "Sí");
+    activar(acomp, viene);
+    if (!viene) { lista.innerHTML = ""; document.getElementById("acomp-num").value = ""; }
+  } else if (t.id === "acomp-num") {
+    var n = parseInt(t.value, 10) || 0, h = "";
+    for (var k = 1; k <= n; k++) h += personaHTML(k);
+    lista.innerHTML = h;
+  } else if (t.dataset && t.dataset.otro) {
+    var otro = form.elements[t.dataset.otro];
+    var esOtro = (t.value === "Otro");
+    otro.hidden = !esOtro;
+    otro.required = esOtro;
+    if (!esOtro) otro.value = "";
+  }
 });
  
-document.querySelectorAll('input[name="menu_infantil"]').forEach(function(r){
-  r.addEventListener("change", function(){
-    var necesita = (r.value === "Necesito menú infantil");
-    document.getElementById("infantil-num").hidden = !necesita;
-    document.getElementById("infantil-para").hidden = !necesita;
-    document.getElementById("infantil-select").required = necesita;
-    document.getElementById("infantil-para-txt").required = necesita;
-    if(!necesita){
-      document.getElementById("infantil-select").value = "";
-      document.getElementById("infantil-para-txt").value = "";
-    }
-  });
-});
- 
-// Formulario: pega aquí la URL de la aplicación web de Google Apps Script (termina en /exec)
-var FORM_URL = "https://script.google.com/macros/s/AKfycbyxtnVHwmGyq-gZQvCaRBAAjKe6aNZIXBL56thYRhl9tm3EYZ3PKLYLxF0-jWnYK3B8/exec";
 function enviar(e){
   e.preventDefault();
   var msg = document.getElementById("msg");
-  if(!FORM_URL){ msg.textContent = "El formulario aún no está conectado."; return false; }
-  var datos = new URLSearchParams(new FormData(e.target));
+  if (!FORM_URL) { msg.textContent = "El formulario aún no está conectado."; return false; }
+  var f = e.target;
+  var titular = f.elements["nombre"].value.trim();
+  var asistencia = f.elements["asistencia"].value;
+  var personas = [];
+  if (asistencia.indexOf("Sí") === 0) {
+    var total = 1 + (f.elements["acompanado"].value === "Sí" ? (parseInt(f.elements["num_acompanantes"].value, 10) || 0) : 0);
+    for (var i = 0; i < total; i++) {
+      var alergia = f.elements["p"+i+"_alergia"].value;
+      if (alergia === "Otro") alergia = "Otro: " + f.elements["p"+i+"_otro"].value.trim();
+      personas.push({
+        nombre: i === 0 ? titular : f.elements["p"+i+"_nombre"].value.trim(),
+        menu: f.elements["p"+i+"_menu"].value,
+        alergia: alergia
+      });
+    }
+  }
+  var datos = new URLSearchParams({titular: titular, asistencia: asistencia, personas: JSON.stringify(personas)});
   msg.textContent = "Enviando...";
-  fetch(FORM_URL, {method:"POST", body:datos, mode:"no-cors"})
-    .then(function(){ msg.textContent = "¡Gracias! Respuesta enviada 🤍"; e.target.reset(); })
+  fetch(FORM_URL, {method: "POST", body: datos, mode: "no-cors"})
+    .then(function(){
+      msg.textContent = "¡Gracias! Respuesta enviada 🤍";
+      f.reset(); activar(bloque, false); activar(acomp, false); lista.innerHTML = "";
+    })
     .catch(function(){ msg.textContent = "No se pudo enviar. Inténtalo de nuevo."; });
   return false;
 }
